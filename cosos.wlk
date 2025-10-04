@@ -1,6 +1,7 @@
 class Coso {
   const temperaturaMaxima
 
+  //Fixear !
   method soportaTemperatura(temp) = temperaturaMaxima >= temp
 
   method peso()

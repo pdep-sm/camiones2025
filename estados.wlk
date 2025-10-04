@@ -1,31 +1,41 @@
+import excepciones.*
+
 class Estado {
 
   method puedeAceptar(coso, camion) = false
+
+  method validarCargarCoso(coso, camion) {
+    throw new EstadoInvalidoException(message = "No se encuentra en estado disponible")
+  }
 
   method estaListoParaPartir(camion) = false
 
   method cargaEnViaje(camion) = 0
 
   method salirDeReparacion(camion) {
-    //TODO
+     throw new EstadoInvalidoException(message = "No está en reperación")
   }
 
   method entrarEnReparacion(camion) {
-    //TODO
+    throw new EstadoInvalidoException(message = "No está disponible")
   }
 
   method salirDeViaje(camion) {
-    //TODO
+    throw new EstadoInvalidoException(message = "No está disponible")
   }
 
   method volverDeViaje(camion) {
-    //TODO
+    throw new EstadoInvalidoException(message = "No está en viaje")
   }
 }
 
 object disponible inherits Estado {
 
   override method puedeAceptar(coso, camion) = camion.puedeCargar(coso)
+
+  override method validarCargarCoso(coso, camion) {
+    camion.validarPuedeCargar(coso)
+  }
 
   override method estaListoParaPartir(camion) = camion.tieneCargaMinimaParaPartir()
 

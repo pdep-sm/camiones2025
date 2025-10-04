@@ -1,18 +1,31 @@
 import cosos.*
 import estados.*
+import excepciones.*
 class Camion {
-  var property estado
+  var property estado = disponible
   const cargaMaxima
   const cososPorDestino = new Dictionary()
 
   // Pto 1 - Pto 3 - Pto 13.a
-  method carcoso(coso, destino) {
-    if (self.puedeAceptar(coso)) {
-      const cosos = cososPorDestino.getOrElse(destino, { [] } )
-      cosos.add(coso)
-      cososPorDestino.put(destino, cosos)
-    }
-    //TODO
+  method cargarCoso(coso, destino) {
+    self.validarCargarCoso(coso)
+    const cosos = cososPorDestino.getOrElse(destino, { [] } )
+    cosos.add(coso)
+    cososPorDestino.put(destino, cosos)    
+  }
+
+  method validarCargarCoso(coso) {
+    try { 
+      estado.validarCargarCoso(coso, self)
+    } catch exception: CamionesException { // Caso exagerado para mostrar catch
+      throw new NoSePuedeCargarException(
+        cause = exception) //Siempre se debe construir usando el error anterior
+    } 
+  }
+
+  method validarPuedeCargar(coso) {
+    if (self.superaCargaMaxima(coso))
+      throw new CargaMaximaException(coso = coso)
   }
   
   method cosos() = cososPorDestino.values().flatten()
@@ -76,6 +89,12 @@ class CamionFrigorifico inherits Camion {
 
   override method puedeCargar(coso) =
     super(coso) and coso.soportaTemperatura(self.temperaturaMaxima())
+
+  override method validarPuedeCargar(coso) {
+    super(coso)
+    if (not coso.soportaTemperatura(self.temperaturaMaxima()))
+      throw new TemperaturaException(message = "El camion no soporta la temperatura del coso")
+  }
 
   method temperaturaMaxima() = camionFrigorifico.temperaturaMaxima()
 

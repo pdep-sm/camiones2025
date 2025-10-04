@@ -1,0 +1,22 @@
+import camiones.*
+import cosos.*
+import deposito.*
+import estados.*
+import excepciones.*
+
+describe "Test carga camiones" {
+  const camion = new Camion(cargaMaxima = 4)
+  const caja = new Caja(peso = 3, elemento = "ketchup", temperaturaMaxima=20)
+  const depositoDestino = new Deposito()
+
+  test "Se puede cargar caja de 3 kilos en camion" {
+    camion.cargarCoso(caja, depositoDestino)
+    assert.equals(#{"ketchup"}, camion.elementos())
+  }
+
+
+  test "No se puede cargar la misma caja por 2da vez por el peso" {
+    camion.cargarCoso(caja, depositoDestino)
+    assert.throwsExceptionWithType(new NoSePuedeCargarException(), { camion.cargarCoso(caja, depositoDestino) })
+  }
+}
